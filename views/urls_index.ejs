@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+    <!-- Add your EJS code here -->
+<header>
+  <% include partials/_header %>
+</header>
+    <a href="/urls/b2xVn2">lighthouse</a>
+    <br>
+    <a href="/urls/9sm5xK">google</a>
+    <ul>
+<!-- needs to take in ??-->
+  <% for (shortUrl in urls) { %>
+    <li><a href="/urls/<%= shortUrl %>"><%= shortUrl %></a>  - <%= urls[shortUrl] %></li>
+  <% }; %>
+
+
+    </ul>
+</body>
+</html>
