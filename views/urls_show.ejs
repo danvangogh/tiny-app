@@ -13,9 +13,9 @@
     <li><%= shortURL %> - <%= fullURL %></li>
     </ul>
 
-<form method="POST" action="/urls/:id">
+<form method="POST" action="/urls/<%= shortURL %>/update">
     <input type ="text" name ="longURL"></input>
-    <button style="submit" value="Enter old URL...">Change Shortlink</button>
+    <button type="submit" value="Enter old URL...">Change Shortlink</button>
 </form>
 
 </body>
