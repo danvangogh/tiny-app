@@ -13,11 +13,13 @@
     <a href="/urls/9sm5xK">google</a>
     <ul>
 <!-- needs to take in ??-->
-  <% for (shortUrl in urls) { %>
-    <li><a href="/urls/<%= shortUrl %>"><%= shortUrl %></a>  - <%= urls[shortUrl] %></li>
-  <% }; %>
-
-
+      <% for (shortUrl in urls) { %>
+        <li><%=  shortUrl %> - <a href="/urls/<%= urls[shortUrl] %>"><%= urls[shortUrl] %></a>
+          <form method="POST" action="/urls/<%= shortUrl %>/delete">
+            <button style="submit">Delete</button>
+          </form>
+        </li>
+      <% }; %>
     </ul>
 </body>
 </html>
