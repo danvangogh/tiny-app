@@ -79,15 +79,15 @@ app.post("/urls/:id/delete", (req, res) => {
   });
 
 app.post("/urls/:id/update", (req, res) => {
-  console.log("testing");
+  // console.log("testing");
   let newURL = req.body.longURL;
   let shortURL = req.params.id;
   //console.log("newURL = " + newURL[shortURL]);
-  //console.log("shortURL = " + shortURL);
+  console.log("shortURL = " + shortURL);
   //console.log("urlDatabase[newURL] = " + urlDatabase[newURL]);
   //console.log("urlDatabase[shortURL] = " + urlDatabase[shortURL]);
   urlDatabase[shortURL] = newURL;
-  // console.log("after updating ",urlDatabase);
+  console.log("after updating ",urlDatabase);
   // delete urlDatabase[req.params.id];
 
   res.redirect("/urls/" + newURL);
