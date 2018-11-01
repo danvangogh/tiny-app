@@ -54,7 +54,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[newCode] = newLongURL;
   console.log(urlDatabase);
 
-  res.redirect('/urls/' + newCode);
+  res.redirect("/urls/" + newCode);
   //console.log(newCode, fullURL);
     // Respond with 'Ok' (we will replace this)
 });
@@ -68,16 +68,17 @@ app.get("/urls/:shortURL", (req, res) => {
   // console.log(urlDatabase[shortURL]);
   let longURL = urlDatabase[shortURL];
   // console.log(urlDatabase[shortURL])
-
   res.redirect(longURL);
 });
 
+// DELETE
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-
-  res.redirect('/urls');
+  res.redirect("/urls");
   });
 
+
+// UPDATE
 app.post("/urls/:id/update", (req, res) => {
   let newURL = req.body.longURL;
   let shortURL = req.params.id;
@@ -87,3 +88,8 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect("/urls/" + newURL);
   });
 
+// ENTER USERNAME
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls/");
+});
