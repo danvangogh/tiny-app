@@ -62,7 +62,12 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let user_id = req.cookies["user_id"];
+  let user_object = users[user_id];
+  let templateVars = {
+    urls: urlDatabase,
+    user_object: user_object,
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -134,25 +139,28 @@ app.post("/LOGOUT", (req, res) => {
 app.post("/register", (req, res) => {
   if (req.body.email && req.body.password && isEmailTaken(req.body.email) === false) {
 
-  res.cookie("email", req.body.email);
-  res.cookie("password", req.body.password);
+    // res.cookie("email", req.body.email);
+    // res.cookie("password", req.body.password);
 
-  let newUserId = generateRandomString(6);
 
-  let newUserObj = {
-  id: newUserId,
-  email: req.body.email,
-  password: req.body.password
-  };
+    let newUserId = generateRandomString(6);
 
-  users[newUserId] = newUserObj;
+    res.cookie("user_id", newUserId);
 
-  console.log("users = " + JSON.stringify(users));
-  console.log("new user obj = " + JSON.stringify(newUserObj));
-} else {
-  res.status(400).send("no way");
-}
-  res.redirect("/urls/")
+    let newUserObj = {
+      id: newUserId,
+      email: req.body.email,
+      password: req.body.password
+    };
+
+    users[newUserId] = newUserObj;
+
+    console.log("users = " + JSON.stringify(users));
+    console.log("new user obj = " + JSON.stringify(newUserObj));
+  } else {
+    res.status(400).send("That's a 400, friend.");
+  }
+  res.redirect("/urls")
 
 });
 
@@ -173,3 +181,7 @@ function isEmailTaken(email) {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
+
+
+// todo:    Error: Can't set headers after they are sent.

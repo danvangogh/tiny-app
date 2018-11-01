@@ -6,19 +6,20 @@
 <body>
   <h1>TINY FLAP</h1>
 
-<% if ( username ) { %>
-   <h1>Hey <%= username %></h1>
-   <form action="/logout" method="POST">
-    <button type="submit">Logout</button>
-  </form>
-<% } else { %>
-  <h3>Enter Username</h3>
-  <form action="/login" method="POST">
-    <input type="text" name="username" placeholder="Username..."></input>
-    <button type="submit">Sign in</button>
- <% } %>
+  <% if ( user_object ) { %>
+    <h1>Hey <%= user_object["email"] %></h1>
+    <form action="/logout" method="POST">
+      <button type="submit">Logout</button>
+    </form>
+  <% } else { %>
+    <h3>Enter Username</h3>
+    <form action="/login" method="POST">
+      <input type="text" name="username" placeholder="Username..."></input>
+      <button type="submit">Sign in</button>
+    </form>
 
-  </form>
+  <% } %>
+
 
 
 </body>
