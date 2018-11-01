@@ -30,12 +30,19 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// Registration Page
+app.get("/register", (req, res) => {
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("register", templateVars);
+});
+
 app.get("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
   let fullURL = urlDatabase[shortURL];
   let templateVars = { shortURL, fullURL, username: req.cookies["username"], };
   res.render("urls_show", templateVars);
 });
+
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
@@ -44,10 +51,6 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.post("/urls", (req, res) => {
@@ -61,6 +64,11 @@ app.post("/urls", (req, res) => {
     // Respond with 'Ok' (we will replace this)
 });
 
+
+
+
+
+// GENERATES RANDOM STRING
 function generateRandomString(end) {
   return Math.random().toString(36).substr(2).slice(0, end);
 }
@@ -100,4 +108,17 @@ app.post("/login", (req, res) => {
 app.post("/LOGOUT", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls/");
+});
+
+// REGISTRATION FORM
+app.post("/register", (req, res) => {
+res.redirect("/urls")
+})
+
+
+
+// Legacy Code
+
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
