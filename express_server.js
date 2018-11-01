@@ -32,7 +32,7 @@ app.get("/urls/new", (req, res) => {
 
 // Registration Page
 app.get("/register", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { username: req.cookies["username"] , password: req.cookies["password"] };
   res.render("register", templateVars);
 });
 
@@ -52,6 +52,8 @@ app.get("/urls", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+
+
 
 app.post("/urls", (req, res) => {
   let newCode = generateRandomString(6);
@@ -110,10 +112,15 @@ app.post("/LOGOUT", (req, res) => {
   res.redirect("/urls/");
 });
 
+
 // REGISTRATION FORM
 app.post("/register", (req, res) => {
-res.redirect("/urls")
+  res.cookie("email", req.body.email);
+  res.cookie("password", req.body.password);
+  console.log(req.body.username);
+  res.redirect("/urls")
 })
+
 
 
 
