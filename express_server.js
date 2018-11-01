@@ -132,6 +132,8 @@ app.post("/LOGOUT", (req, res) => {
 
 // REGISTRATION FORM
 app.post("/register", (req, res) => {
+  if (req.body.email && req.body.password && isEmailTaken(req.body.email) === false) {
+
   res.cookie("email", req.body.email);
   res.cookie("password", req.body.password);
 
@@ -147,10 +149,23 @@ app.post("/register", (req, res) => {
 
   console.log("users = " + JSON.stringify(users));
   console.log("new user obj = " + JSON.stringify(newUserObj));
+} else {
+  res.status(400).send("no way");
+}
   res.redirect("/urls/")
-})
 
+});
 
+// CHECK IF EMAIL EXISTS
+function isEmailTaken(email) {
+  for(const userId in users) {
+    var user = users[userId];
+    if (user.email === email) {
+      return true;
+    }
+  }
+  return false;
+}
 
 
 // Legacy Code
