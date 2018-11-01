@@ -11,11 +11,28 @@ app.use(cookieParser());
 
 // urlObj =
 
+// Hardcoded Databases
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
+
+////////////////////////////
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -117,8 +134,20 @@ app.post("/LOGOUT", (req, res) => {
 app.post("/register", (req, res) => {
   res.cookie("email", req.body.email);
   res.cookie("password", req.body.password);
-  console.log(req.body.username);
-  res.redirect("/urls")
+
+  let newUserId = generateRandomString(6);
+
+  let newUserObj = {
+  id: newUserId,
+  email: req.body.email,
+  password: req.body.password
+  };
+
+  users[newUserId] = newUserObj;
+
+  console.log("users = " + JSON.stringify(users));
+  console.log("new user obj = " + JSON.stringify(newUserObj));
+  res.redirect("/urls/")
 })
 
 
