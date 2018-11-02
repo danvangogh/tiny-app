@@ -132,44 +132,37 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect("/urls/" + newURL);
   });
 
+
+
+
+function validateUser(email, password){
+  for(var key in users){
+    if(users[key].email === email && users[key].password === password){
+      return users[key];
+    }
+  }
+}
 // ENTER USERNAME
 app.post("/login", (req, res) => {
-  // check if the email exists already in the database
+
+  let password = req.body.password;
+  let email = req.body.email;
+
   if (req.body.email && req.body.password) {
-    let password = req.body.password;
-    let email = req.body.email;
-    for (userKey in users) {
-      if (users[userKey].email == email && users[userKey].password == password) {
-        user_id = users[userKey].id;
-      // console.log(users[userKey].email);
-      // console.log(users[userKey].id);
-      // console.log(users[userKey].password);
-      console.log(user_id)
+    //validate the credentials of the user
+    var user = validateUser(email, password);
+    if(user){
+      console.log("everything worked");
+      res.cookie('user_id', user.id);
+      res.redirect("/urls");
+
+    } else {
+      res.status(403).send('Username or password was incorrect');
+    }
+  } else {
+      return res.status(403).send("That there's a 403, bud.")
   }
-
-
-  }
-
-}
-// if not, return 403
-
-// check if the password matches the password key in the 'current' user id
-// if not, return 403
-// get the user id, and assign it to the cookie (user_id)
-// redirect to /
-
-
-
-
-
-
-  res.redirect("/urls/");
 });
-
-
-
-
-
 
 
 
