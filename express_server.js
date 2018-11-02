@@ -13,21 +13,31 @@ app.use(cookieParser());
 
 // Hardcoded Databases
 
+// original DB
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+  "b2xVn2": {
+    shortURL: "b2xVn2",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "userRandomID",
+  },
+  "9sm5xK": {
+    shortURL: "b2xVn2",
+    longURL: "http://www.google.com",
+    userID: "userRandomID",
+  }
+}
+
 
 const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "asdf"
+    password: "asdf",
   },
  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "asdf"
+    password: "asdf",
   }
 }
 
@@ -35,19 +45,27 @@ const users = {
 ////////////////////////////
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/login");
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+
 app.get("/urls/new", (req, res) => {
   let user_id = req.cookies["user_id"];
   let user_object = users[user_id];
-  templateVars = { user_object: user_object };
+  templateVars = {
+    user_object: user_object,
+   };
+  if (user_object) {
   res.render("urls_new", templateVars);
+} else {
+  res.redirect("/login");
+}
 });
+
 
 // REGISTRATION PAGE
 app.get("/register", (req, res) => {
@@ -69,10 +87,10 @@ app.get("/login", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
-  let fullURL = urlDatabase[shortURL];
+  let longURL = urlDatabase[req.params.id].longURL;
   let user_id = req.cookies["user_id"];
   let user_object = users[user_id];
-  let templateVars = { shortURL, fullURL, user_object: user_object };
+  let templateVars = { shortURL, longURL, urlDatabase, user_object: user_object };
   res.render("urls_show", templateVars);
 });
 
@@ -92,12 +110,20 @@ app.get("/urls.json", (req, res) => {
 });
 
 
-
 app.post("/urls", (req, res) => {
   let newCode = generateRandomString(6);
   let newLongURL = req.body.longURL;
-  urlDatabase[newCode] = newLongURL;
-  console.log(urlDatabase);
+  let user_id = req.cookies["user_id"];
+
+  urlDatabase[newCode] = {
+    shortURL: newCode,
+    longURL: newLongURL,
+    userID: user_id
+  };
+
+  console.log(newLongURL);
+  // console.log("shortURL = " + shortURL)
+  // console.log("shortURL[longURL] = " + shortURL[longURL])
 
   res.redirect("/urls/" + newCode);
   //console.log(newCode, fullURL);
