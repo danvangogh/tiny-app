@@ -22,12 +22,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "asdf"
   },
  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "asdf"
   }
 }
 
@@ -43,20 +43,30 @@ app.listen(PORT, () => {
 });
 
 app.get("/urls/new", (req, res) => {
-  templateVars = { username: req.cookies["username"] };
+  let user_id = req.cookies["user_id"];
+  let user_object = users[user_id];
+  templateVars = { user_object: user_object };
   res.render("urls_new", templateVars);
 });
 
-// Registration Page
+// REGISTRATION PAGE
 app.get("/register", (req, res) => {
   let templateVars = { username: req.cookies["username"] , password: req.cookies["password"] };
   res.render("register", templateVars);
 });
 
+// LOGIN PAGE
+app.get("/login", (req, res) => {
+  let templateVars = { username: req.cookies["email"] , password: req.cookies["password"] };
+  res.render("login", templateVars);
+});
+
 app.get("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
   let fullURL = urlDatabase[shortURL];
-  let templateVars = { shortURL, fullURL, username: req.cookies["username"], };
+  let user_id = req.cookies["user_id"];
+  let user_object = users[user_id];
+  let templateVars = { shortURL, fullURL, user_object: user_object };
   res.render("urls_show", templateVars);
 });
 
@@ -124,9 +134,45 @@ app.post("/urls/:id/update", (req, res) => {
 
 // ENTER USERNAME
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  // check if the email exists already in the database
+  if (req.body.email && req.body.password) {
+    let password = req.body.password;
+    let email = req.body.email;
+    for (userKey in users) {
+      if (users[userKey].email == email && users[userKey].password == password) {
+        user_id = users[userKey].id;
+      // console.log(users[userKey].email);
+      // console.log(users[userKey].id);
+      // console.log(users[userKey].password);
+      console.log(user_id)
+  }
+
+
+  }
+
+}
+// if not, return 403
+
+// check if the password matches the password key in the 'current' user id
+// if not, return 403
+// get the user id, and assign it to the cookie (user_id)
+// redirect to /
+
+
+
+
+
+
   res.redirect("/urls/");
 });
+
+
+
+
+
+
+
+
 
 // LOGOUT
 app.post("/LOGOUT", (req, res) => {
