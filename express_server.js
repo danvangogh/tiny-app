@@ -51,13 +51,19 @@ app.get("/urls/new", (req, res) => {
 
 // REGISTRATION PAGE
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies["username"] , password: req.cookies["password"] };
+  let user_id = req.cookies["user_id"];
+  let user_object = users[user_id];
+  templateVars = { user_object: user_object };
+  // let templateVars = { username: req.cookies["username"] , password: req.cookies["password"] };
   res.render("register", templateVars);
 });
 
 // LOGIN PAGE
 app.get("/login", (req, res) => {
-  let templateVars = { username: req.cookies["email"] , password: req.cookies["password"] };
+  let user_id = req.cookies["user_id"];
+  let user_object = users[user_id];
+  templateVars = { user_object: user_object };
+  // let templateVars = { username: req.cookies["email"] , password: req.cookies["password"] };
   res.render("login", templateVars);
 });
 
@@ -169,7 +175,7 @@ app.post("/login", (req, res) => {
 
 // LOGOUT
 app.post("/LOGOUT", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls/");
 });
 
@@ -177,11 +183,8 @@ app.post("/LOGOUT", (req, res) => {
 // REGISTRATION FORM
 app.post("/register", (req, res) => {
   if (req.body.email && req.body.password && isEmailTaken(req.body.email) === false) {
-
     // res.cookie("email", req.body.email);
     // res.cookie("password", req.body.password);
-
-
     let newUserId = generateRandomString(6);
 
     res.cookie("user_id", newUserId);
