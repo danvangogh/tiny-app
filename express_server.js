@@ -159,9 +159,10 @@ app.post("/urls/:id/update", (req, res) => {
   let newURL = req.body.longURL;
   let shortURL = req.params.id;
   // console.log("shortURL = " + shortURL);
-  urlDatabase[shortURL] = newURL;
-  // console.log("after updating ",urlDatabase);
-  res.redirect("/urls/" + newURL);
+    console.log(urlDatabase);
+  urlDatabase[shortURL].longURL = newURL;
+  console.log("after updating ",urlDatabase[shortURL].longURL);
+  res.redirect("/urls/" + shortURL);
   });
 
 
@@ -184,7 +185,7 @@ app.post("/login", (req, res) => {
     //validate the credentials of the user
     var user = validateUser(email, password);
     if(user){
-      console.log("everything worked");
+      // console.log("everything worked");
       res.cookie('user_id', user.id);
       res.redirect("/urls");
 
