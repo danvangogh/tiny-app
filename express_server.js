@@ -9,6 +9,10 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
+
+
 // urlObj =
 
 // Hardcoded Databases
@@ -34,10 +38,15 @@ const users = {
     email: "user@example.com",
     password: "asdf",
   },
- "user2RandomID": {
+  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "asdf",
+  },
+  "454545": {
+    id: "454545",
+    email: "45@45.com",
+    password: "45",
   }
 }
 
@@ -85,6 +94,11 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+
+
+
+
+
 app.get("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
   let longURL = urlDatabase[req.params.id].longURL;
@@ -95,15 +109,50 @@ app.get("/urls/:id", (req, res) => {
 });
 
 
+
+
+
+
+
+
+
+
+function urlsForUser(id) {
+  let newUserObj = {};
+  for (let shortURL in urlDatabase) {
+    if ( urlDatabase[shortURL].userID === id) {
+      newUserObj[shortURL] = urlDatabase[shortURL];
+      }
+  }
+      return newUserObj;
+}
+
+
+
+
+// URL INDEX PAGE
+
 app.get("/urls", (req, res) => {
+
   let user_id = req.cookies["user_id"];
   let user_object = users[user_id];
   let templateVars = {
-    urls: urlDatabase,
     user_object: user_object,
-  };
+    urls: urlsForUser(user_id),
+  }
+
+  // return urlsForUser(user_id);
   res.render("urls_index", templateVars);
 });
+
+
+
+
+
+
+
+
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -147,45 +196,83 @@ app.get("/urls/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+
+
+
+
+
 // DELETE
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
-  });
+  if (req.cookies["user_id"]) {
+
+  let userCookie = req.cookies["user_id"];
+  // let userDB = users[userCookie].userID;
+  // console.log("shortURL = ", users[userCookie].id)
+  // console.log("db = " + user)
+
+  if ( users[userCookie].id === req.cookies["user_id"] ) {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+  }
+  else res.send("this is not yours to delete.")
+}
+  else res.send("this is not yours to delete.")
+});
+
+
+
+
+
+
 
 
 // UPDATE
 app.post("/urls/:id/update", (req, res) => {
+
   let newURL = req.body.longURL;
   let shortURL = req.params.id;
-  // console.log("shortURL = " + shortURL);
-    console.log(urlDatabase);
-  urlDatabase[shortURL].longURL = newURL;
-  console.log("after updating ",urlDatabase[shortURL].longURL);
+  let userCookie = req.cookies["user_id"];
+  let userDB = urlDatabase[shortURL].userID;
+
+  // console.log(urlDatabase);
+  // console.log(shortURL)
+  // console.log(userCookie)
+  // console.log(userDB);
+  // if the user's id (cookie) === urlDatabase[shortURL].userID, then do this. otherwise, no can do
+  if ( userDB === userCookie ) {
+    urlDatabase[shortURL].longURL = newURL;
+  // console.log("after updating ",urlDatabase[shortURL].longURL);
   res.redirect("/urls/" + shortURL);
+  }
+  else res.send("this is not yours to change.")
   });
 
 
 
 
 function validateUser(email, password){
-  for(var key in users){
-    if(users[key].email === email && users[key].password === password){
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  for (var key in users) {
+    var password = users[key].password;
+    if (users[key].email === email && bcrypt.compareSync(password, hashedPassword) ) {
       return users[key];
     }
   }
 }
-// ENTER USERNAME
+
+// LOGIN PAGE
 app.post("/login", (req, res) => {
 
-  let password = req.body.password;
-  let email = req.body.email;
+  const email = req.body.email;
+  const password = req.body.password
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (req.body.email && req.body.password) {
     //validate the credentials of the user
     var user = validateUser(email, password);
-    if(user){
-      // console.log("everything worked");
+    if (user) {
+      console.log("everything worked");
+      console.log("hashedPassword = ", hashedPassword)
       res.cookie('user_id', user.id);
       res.redirect("/urls");
 
@@ -210,17 +297,21 @@ app.post("/LOGOUT", (req, res) => {
 // REGISTRATION FORM
 app.post("/register", (req, res) => {
   if (req.body.email && req.body.password && isEmailTaken(req.body.email) === false) {
-    // res.cookie("email", req.body.email);
-    // res.cookie("password", req.body.password);
+
     let newUserId = generateRandomString(6);
 
     res.cookie("user_id", newUserId);
 
+  const password = req.body.password
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
     let newUserObj = {
       id: newUserId,
       email: req.body.email,
-      password: req.body.password
+      password: hashedPassword
     };
+
+
 
     users[newUserId] = newUserObj;
 
