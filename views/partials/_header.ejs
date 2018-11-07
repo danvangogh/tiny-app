@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tiny Flapp</title>
+  <title>Tiny App</title>
 </head>
 <body>
-  <h1>TINY FLAP</h1>
+  <h1>TINY APP</h1>
 
 
   <% if ( user_object ) { %>
-    <h1>Hey <%= user_object["email"] %></h1>
+    <h2>Hey <%= user_object["email"] %></h2>
     <form action="/logout" method="POST">
       <button type="submit">Logout</button>
     </form>
   <% } else { %>
-
   <h3><a href="/register">Register here</a></h3>
   <h3><a href="/login">Login here</a></h3>
   <% } %>
-
-
-
-
-<h3>This is the end of the header, fyi</h3>
-
-
 </body>
 </html>
 
